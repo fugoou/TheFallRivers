@@ -1,0 +1,73 @@
+---
+import dayjs from "dayjs";
+import { Image } from "astro:assets";
+import { infoTest } from "../consts";
+import type { EnvelopeInfo } from "../types";
+const { title, desc, image, pubDate, badge, tags, url } =
+  Astro.props as EnvelopeInfo;
+const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
+const displayDate = dayjs(pubDate).format("ddd MMM DD YYYY");
+const hasTags = tags && tags.length > 0;
+const target = "_self";
+---
+
+<div
+  class="mt-8 relative w-full overflow-hidden card bg-base-100 shadow-xl flex flex-col lg:flex-row"
+>
+  <div
+    class="relative w-full h-auto rounded-3xl overflow-hidden card bg-base-100 flex-1 lg:order-1 order-2 flex"
+  >
+    <div class="relative w-full h-full p-6 flex flex-col justify-between">
+      <a href={url} target={target}>
+        <h1 id={title}>
+          {title}
+        </h1>
+      </a>
+      <div class="m-2">{desc}</div>
+      <div class="m-2">
+        {displayDate && <div class="badge badge-neutral">{displayDate}</div>}
+        {badge && <div class="badge badge-primary">{badge}</div>}
+        <div class="tags">
+          <code>{infoTest.tag}</code>
+          {
+            hasTags ? (
+              tags.map((tag) => (
+                <>
+                  <a
+                    href={`${tag_url}/${tag}`}
+                    class="btn btn-xs btn-secondary"
+                  >
+                    {tag}
+                  </a>
+                  <span>&thinsp;</span>
+                </>
+              ))
+            ) : (
+              <div class="btn btn-xs btn-secondary btn-disabled">
+                {infoTest.noTag}
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="relative w-full lg:w-2/5 h-auto rounded-none overflow-hidden lg:order-2 order-1"
+  >
+    {
+      image && (
+        <Image
+          src={image}
+          alt={title}
+          width="300"
+          height="200"
+          format="webp"
+          loading="lazy"
+          class="object-cover w-full h-full"
+        />
+      )
+    }
+  </div>
+</div>
